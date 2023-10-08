@@ -1,10 +1,7 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+
+
 
 public class ObjectPlacerSystem : MonoBehaviour
 {
@@ -37,7 +34,9 @@ public class ObjectPlacerSystem : MonoBehaviour
         UpdatePreviewTilemap();
 
         PlaceObject();
+        DestroyObject();
     }
+
 
 
     private void CalculateCellCord()
@@ -50,10 +49,12 @@ public class ObjectPlacerSystem : MonoBehaviour
     private void UpdateSelectedTile()
     {   
         if (Input.GetKey(KeyCode.LeftControl)) {
+            int palletq = _TilePalletSO.PlaceableTiles.Count;
             float change = Input.mouseScrollDelta.y;
             _SelectedTileIndex += (int)change;
+            _SelectedTileIndex = (_SelectedTileIndex < 0) ? _SelectedTileIndex + palletq : _SelectedTileIndex % palletq;
         }
-        SelectedTile = _TilePalletSO.PlaceableTiles[Mathf.Abs(_SelectedTileIndex) % _TilePalletSO.PlaceableTiles.Count];
+        SelectedTile = _TilePalletSO.PlaceableTiles[_SelectedTileIndex];
     }
 
 
@@ -66,6 +67,12 @@ public class ObjectPlacerSystem : MonoBehaviour
     private void PlaceObject() {
         if (Input.GetMouseButton(0)) {
             _LogicTilemap.SetTile(_cellCords, SelectedTile);
+        }
+    }
+
+    private void DestroyObject() {
+        if (Input.GetMouseButton(1)) {
+            _LogicTilemap.SetTile(_cellCords, null);
         }
     }
 }
