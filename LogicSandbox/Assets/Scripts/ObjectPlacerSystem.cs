@@ -21,7 +21,7 @@ public class ObjectPlacerSystem : MonoBehaviour
 
 
     // Temporary variables
-
+    private Vector3Int _cellCords;
 
 
     void Start()
@@ -30,10 +30,21 @@ public class ObjectPlacerSystem : MonoBehaviour
     }
 
 
-
     void Update() {
+        CalculateCellCord();
+
         UpdateSelectedTile();
         UpdatePreviewTilemap();
+
+        PlaceObject();
+    }
+
+
+    private void CalculateCellCord()
+    {
+        Vector3 mouseWorldPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector3Int cellCords = _PreviewTilemap.WorldToCell(mouseWorldPoint);
+        _cellCords = cellCords;
     }
 
     private void UpdateSelectedTile()
@@ -45,12 +56,16 @@ public class ObjectPlacerSystem : MonoBehaviour
         SelectedTile = _TilePalletSO.PlaceableTiles[Mathf.Abs(_SelectedTileIndex) % _TilePalletSO.PlaceableTiles.Count];
     }
 
-    private void UpdatePreviewTilemap()
-    {
-        _PreviewTilemap.ClearAllTiles();
-        Vector3 mouseWorldPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector3Int cellCords = _PreviewTilemap.WorldToCell(mouseWorldPoint);
 
-        _PreviewTilemap.SetTile(cellCords, SelectedTile);
+
+    private void UpdatePreviewTilemap() {
+        _PreviewTilemap.ClearAllTiles();
+        _PreviewTilemap.SetTile(_cellCords, SelectedTile);
+    }
+
+    private void PlaceObject() {
+        if (Input.GetMouseButton(0)) {
+            _LogicTilemap.SetTile(_cellCords, SelectedTile);
+        }
     }
 }
