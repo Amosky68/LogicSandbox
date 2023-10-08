@@ -63,12 +63,9 @@ public class CameraMovements : MonoBehaviour
         }
     }
 
-
-    void CalculateZoom()
-    {
+    void CalculateZoom() {
         float deltazoomvalue = Input.mouseScrollDelta.y;
-
-        if (deltazoomvalue != 0f)
+        if (deltazoomvalue != 0f && ! Input.GetKey(KeyCode.LeftControl))
         {
 
             float newZvalue = Tozoomvalue;
@@ -78,13 +75,11 @@ public class CameraMovements : MonoBehaviour
         }
     }
 
-
     void ApplyZoom()
     {
         float orthographicSizeDifference = Tozoomvalue - maincamera.orthographicSize;
         maincamera.orthographicSize += orthographicSizeDifference * SmoothZoomSpeed * Time.deltaTime;
     }
-
 
     void ApplyCameraCenter()
     {

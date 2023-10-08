@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d0dc729d1d92454ab891f82f677630e, type: 3}
+  m_Name: PlaceableTiles
+  m_EditorClassIdentifier: 
+  PlaceableTiles:
+  - {fileID: 11400000, guid: fc021311586ff9a46915b02324d88d29, type: 2}
+  - {fileID: 11400000, guid: 170ea13ec3c9e4d4b8b4a21b3fdbe4d1, type: 2}
+  - {fileID: 11400000, guid: 9fa45eed8d5b1fe4280cc4c2b55209bb, type: 2}
