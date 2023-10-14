@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: TestTiles_3
+  m_Name: TestTiles-1.png (2)_4
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 1337054774, guid: ca885829eb588f248935b0327b318381, type: 3}
+  m_Sprite: {fileID: 1910520101, guid: 6232ddfe0894b9540aa923aa326c58a9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1

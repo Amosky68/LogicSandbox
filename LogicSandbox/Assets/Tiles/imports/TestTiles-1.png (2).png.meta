@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: ca885829eb588f248935b0327b318381
+guid: 6232ddfe0894b9540aa923aa326c58a9
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -110,7 +110,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: TestTiles_0
+      name: TestTiles-1.png (2)_0
       rect:
         serializedVersion: 2
         x: 0
@@ -124,14 +124,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 2c6023e37f01ed04b85a5d3a46ff9699
-      internalID: 871595838
+      spriteID: 792472906fa28a74ba67a7d2d20f8d5b
+      internalID: 1698766279
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TestTiles_1
+      name: TestTiles-1.png (2)_1
       rect:
         serializedVersion: 2
         x: 32
@@ -145,14 +145,35 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e1f39bc121a5feb43bd34d237a7e5fc0
-      internalID: 1587690988
+      spriteID: 6b7012b11b7c6474085ec2731f89c23b
+      internalID: 11442454
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TestTiles_2
+      name: TestTiles-1.png (2)_2
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 32
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bdc302704695a174689a0f51d786ba31
+      internalID: -1610663784
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TestTiles-1.png (2)_3
       rect:
         serializedVersion: 2
         x: 0
@@ -166,14 +187,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f180544f6fad7214b8ee9dbdc3199088
-      internalID: -1332203618
+      spriteID: e9e2bac3c2c23be4cb95bc26e60b30a1
+      internalID: 1216046696
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TestTiles_3
+      name: TestTiles-1.png (2)_4
       rect:
         serializedVersion: 2
         x: 32
@@ -187,8 +208,29 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 286e7434e4d9b9f4eb9d3ac040240fa7
-      internalID: 1337054774
+      spriteID: 48dba5b9a92818b4bbbfcf83cadad59a
+      internalID: 1910520101
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TestTiles-1.png (2)_5
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cde29fa10e0807e45a103b040d678c4b
+      internalID: -1494805771
       vertices: []
       indices: 
       edges: []
@@ -204,10 +246,12 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      TestTiles_0: 871595838
-      TestTiles_1: 1587690988
-      TestTiles_2: -1332203618
-      TestTiles_3: 1337054774
+      TestTiles-1.png (2)_0: 1698766279
+      TestTiles-1.png (2)_1: 11442454
+      TestTiles-1.png (2)_2: -1610663784
+      TestTiles-1.png (2)_3: 1216046696
+      TestTiles-1.png (2)_4: 1910520101
+      TestTiles-1.png (2)_5: -1494805771
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
