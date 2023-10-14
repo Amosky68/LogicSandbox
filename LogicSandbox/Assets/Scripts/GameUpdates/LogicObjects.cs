@@ -13,7 +13,7 @@ public class LogicObjects
 
 }
 
-public class Network
+public class WireNetwork
 {
     public Dictionary<Vector2Int, Wire> Wires = new Dictionary<Vector2Int, Wire>();
     public bool isActivated = false;

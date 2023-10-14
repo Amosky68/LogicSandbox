@@ -2,11 +2,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.Tilemaps;
+using UnityEngine.UIElements;
 
 public static class LogicMap
 {
     public static Dictionary<Vector2Int, dynamic> Map = new Dictionary<Vector2Int, dynamic>();
+    public static List<WireNetwork> List = new List<WireNetwork>();
 
 
     public static void PlaceObject(Vector2Int position, dynamic LogicObject)
@@ -29,6 +31,9 @@ public static class LogicMap
 
 public class LogicUpdater : MonoBehaviour
 {
+    public Color activatedMask = Color.white;
+    public Color unactivatedMask = Color.black;
+    public Tilemap logicTilemap;
 
 
     private void Start()
@@ -43,8 +48,23 @@ public class LogicUpdater : MonoBehaviour
     void OnTickUpdate()
     {
         Dictionary<Vector2Int, dynamic> NewMap = new Dictionary<Vector2Int, dynamic>();
+        foreach (dynamic logicObject in LogicMap.Map.Values) 
+        {
+
+        }
+    }
 
 
-
+    private void RenderWires()
+    {
+        if (logicTilemap == null) { return; }
+        foreach (dynamic logicObject in LogicMap.Map.Values) {
+            if (logicObject is Wire) 
+            {
+                Color displayMask = logicObject.isActivated ? activatedMask : unactivatedMask;
+                logicTilemap.SetTileFlags(logicObject.position, TileFlags.None);
+                logicTilemap.SetColor(logicObject.position, displayMask);
+            }
+        }
     }
 }

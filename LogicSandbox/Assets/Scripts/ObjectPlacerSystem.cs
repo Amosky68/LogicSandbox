@@ -65,9 +65,14 @@ public class ObjectPlacerSystem : MonoBehaviour
     }
 
     private void PlaceObject() {
+
+
         if (Input.GetMouseButton(0)) {
             _LogicTilemap.SetTile(_cellCords, SelectedTile);
         }
+
+
+
     }
 
     private void DestroyObject() {
