@@ -9,15 +9,19 @@ public static class LogicMap
     public static Dictionary<Vector2Int, dynamic> Map = new Dictionary<Vector2Int, dynamic>();
 
 
-    public static void PlaceObject(int x, int y , dynamic LogicObject)
+    public static void PlaceObject(Vector2Int position, dynamic LogicObject)
     {
         if (LogicObject != null)
         {
-            Map.Add((x, y), LogicObject);
+            Map.Add(position, LogicObject);
         }
     }
-    public static object GetObject(int x , int y) {
-        return Map[(x, y)];
+    public static dynamic GetObject(Vector2Int position) {
+        dynamic obj;
+        if (Map.TryGetValue(position, out obj)) {
+            return obj;
+        }
+        return null;
     }
 
 }
