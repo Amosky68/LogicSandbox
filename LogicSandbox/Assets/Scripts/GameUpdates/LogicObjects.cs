@@ -4,6 +4,25 @@ using System.Linq;
 using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 
+
+// Basic Orientations :
+//
+//            side 0
+//        +-------------+
+//        |             |
+//        |             |
+// side 3 |    Tile     |  side 1
+//        |             |
+//        |             |
+//        |             |
+//        +-------------+
+//            side 2
+
+
+
+
+
+
 public class LogicObjects
 {
 
@@ -82,6 +101,13 @@ public class Wire : LogicObjects
 
     public Vector2Int position = Vector2Int.zero;
 
+
+    public Wire(int _orientation, List<int> connectedSides, int wireNetworkID = 0)
+    {
+        networkID = wireNetworkID;
+        orientation = _orientation;
+        inputsSides = connectedSides;
+    }
 
     public List<Wire> GetAdjacentWires()
     {

@@ -1145,8 +1145,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f57820ecd9adf494da03c3e434267db3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsPaused: 1
-  TickDelay: 0.1
+  activatedMask: {r: 1, g: 1, b: 1, a: 1}
+  unactivatedMask: {r: 0, g: 0, b: 0, a: 1}
+  logicTilemap: {fileID: 853627950}
 --- !u!1 &1946778021
 GameObject:
   m_ObjectHideFlags: 0
@@ -1192,8 +1193,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _TilePalletSO: {fileID: 11400000, guid: 4c1688df61ef9c346819aa29adaa69e7, type: 2}
-  SelectedTile: {fileID: 11400000, guid: 659c3aab0306ddb4d83cc09253537bfa, type: 2}
   _SelectedTileIndex: 0
+  SelectedTile: {fileID: 11400000, guid: 659c3aab0306ddb4d83cc09253537bfa, type: 2}
+  SelectedTileRotation: 0
   _PreviewTilemap: {fileID: 658892912}
   _LogicTilemap: {fileID: 853627950}
 --- !u!1 &2136843511

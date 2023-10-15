@@ -13,7 +13,7 @@ public class ObjectPlacerSystem : MonoBehaviour
 
     public Tile SelectedTile;
     public dynamic SelectedObject;
-    public int SelectedTileRotation;
+    public int SelectedTileRotation = 0;
 
 
     [Header("Tilemaps")]
@@ -29,18 +29,19 @@ public class ObjectPlacerSystem : MonoBehaviour
 
     void Start()
     {
+        UpdateSelectedRotation();
         UpdateSelectedTile();
         UpdateSelectedObject();
-        UpdateSelectedRotation();
     }
 
 
     void Update() {
         CalculateCellCord();
 
+        UpdateSelectedRotation();
         UpdateSelectedTile();
         UpdateSelectedObject();
-        UpdateSelectedRotation();
+
 
         UpdatePreviewTilemap();
 
@@ -68,14 +69,15 @@ public class ObjectPlacerSystem : MonoBehaviour
     }
     private void UpdateSelectedObject()
     {
-        //SelectedObject = LogicObjectsProperties.Objects[_SelectedTileIndex];
+        SelectedObject = LogicObjectsProperties.Objects[_SelectedTileIndex];
+        SelectedObject.orientation = SelectedTileRotation;
+        SelectedObject.position = ((Vector2Int)_cellCords);
     }
     private void UpdateSelectedRotation()
     {
         if (Input.GetKeyDown(KeyCode.R))
         {
-            print("rotating");
-            SelectedTileRotation = (SelectedTileRotation + 1) % 4;
+            SelectedTileRotation = (SelectedTileRotation - 1) % 4;
             TileRotationMatrix = Matrix4x4.Rotate(Quaternion.Euler(0f, 0f, SelectedTileRotation * 90f));
         }
     }
@@ -94,8 +96,8 @@ public class ObjectPlacerSystem : MonoBehaviour
         {
             _LogicTilemap.SetTile(_cellCords, SelectedTile);
             _LogicTilemap.SetTransformMatrix(_cellCords, TileRotationMatrix);
-            LogicMap.Map.Add((Vector2Int)_cellCords, SelectedObject);
 
+            LogicMap.Map.Add((Vector2Int)_cellCords, SelectedObject);
         }
     }
 

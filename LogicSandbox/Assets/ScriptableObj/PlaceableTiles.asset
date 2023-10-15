@@ -14,7 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PlaceableTiles:
   - {fileID: 11400000, guid: 40d20f5cbac37214ba745df989708461, type: 2}
-  - {fileID: 11400000, guid: eafc409ed10c91b4bb329463e66988ea, type: 2}
+  - {fileID: 11400000, guid: 718636ab25ecadb43a2ee7f4cd269af2, type: 2}
   - {fileID: 11400000, guid: 7931d233667be514e87e21661023c13c, type: 2}
   - {fileID: 11400000, guid: 81ab735931242cb4fbd3d6284de592f5, type: 2}
-  - {fileID: 11400000, guid: 718636ab25ecadb43a2ee7f4cd269af2, type: 2}

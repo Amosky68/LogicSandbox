@@ -43,11 +43,9 @@ public class LogicUpdater : MonoBehaviour
         TickSystem.OnTickUpdate += delegate (object sender, TickSystem.OnTickUpdateArgs ags)
         {
             OnTickUpdate();
+            RenderWires();
         };
 
-        lobj.Add(new Wire());
-        lobj.Add(new Delayer());
-        print(lobj.ToArray());
     }
 
 
@@ -56,7 +54,7 @@ public class LogicUpdater : MonoBehaviour
         Dictionary<Vector2Int, dynamic> NewMap = new Dictionary<Vector2Int, dynamic>();
         foreach (dynamic logicObject in LogicMap.Map.Values) 
         {
-
+            print("tick");
         }
     }
 
@@ -67,9 +65,10 @@ public class LogicUpdater : MonoBehaviour
         foreach (dynamic logicObject in LogicMap.Map.Values) {
             if (logicObject is Wire) 
             {
+                print("paint" + logicObject.position);
                 Color displayMask = logicObject.isActivated ? activatedMask : unactivatedMask;
-                logicTilemap.SetTileFlags(logicObject.position, TileFlags.None);
-                logicTilemap.SetColor(logicObject.position, displayMask);
+                logicTilemap.SetTileFlags((Vector3Int)logicObject.position, TileFlags.None);
+                logicTilemap.SetColor((Vector3Int)logicObject.position, displayMask);
             }
         }
     }
