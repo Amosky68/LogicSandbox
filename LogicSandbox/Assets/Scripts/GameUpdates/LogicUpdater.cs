@@ -67,7 +67,6 @@ public class LogicUpdater : MonoBehaviour
             {
                 print("paint" + logicObject.position);
                 Color displayMask = logicObject.isActivated ? activatedMask : unactivatedMask;
-                logicTilemap.SetTileFlags((Vector3Int)logicObject.position, TileFlags.None);
                 logicTilemap.SetColor((Vector3Int)logicObject.position, displayMask);
             }
         }

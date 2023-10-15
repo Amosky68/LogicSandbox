@@ -93,10 +93,10 @@ public class ObjectPlacerSystem : MonoBehaviour
     private void PlaceObject()
     {
         if (Input.GetMouseButtonDown(0))
-        {
+        { 
             _LogicTilemap.SetTile(_cellCords, SelectedTile);
             _LogicTilemap.SetTransformMatrix(_cellCords, TileRotationMatrix);
-
+            _LogicTilemap.SetTileFlags(_cellCords, TileFlags.None);
             LogicMap.Map.Add((Vector2Int)_cellCords, SelectedObject);
         }
     }
