@@ -34,6 +34,8 @@ public class LogicUpdater : MonoBehaviour
     public Color activatedMask = Color.white;
     public Color unactivatedMask = Color.black;
     public Tilemap logicTilemap;
+    public List<LogicObjects> lobj = new List<LogicObjects>();
+
 
 
     private void Start()
@@ -42,6 +44,10 @@ public class LogicUpdater : MonoBehaviour
         {
             OnTickUpdate();
         };
+
+        lobj.Add(new Wire());
+        lobj.Add(new Delayer());
+        print(lobj.ToArray());
     }
 
 

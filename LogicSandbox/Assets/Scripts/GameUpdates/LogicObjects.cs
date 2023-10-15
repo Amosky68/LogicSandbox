@@ -13,6 +13,7 @@ public class LogicObjects
 
 }
 
+
 public class WireNetwork
 {
     public Dictionary<Vector2Int, Wire> Wires = new Dictionary<Vector2Int, Wire>();
@@ -81,6 +82,7 @@ public class Wire : LogicObjects
 
     public Vector2Int position = Vector2Int.zero;
 
+
     public List<Wire> GetAdjacentWires()
     {
         Vector2Int[] pos = new Vector2Int[4]
@@ -103,4 +105,12 @@ public class Wire : LogicObjects
 
         return outlist;
     }
+}
+
+
+
+public class Delayer : LogicObjects
+{
+        public Vector2Int position = Vector2Int.zero;
+
 }
