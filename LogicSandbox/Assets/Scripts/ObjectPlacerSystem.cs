@@ -29,8 +29,8 @@ public class ObjectPlacerSystem : MonoBehaviour
 
     void Start()
     {
-        UpdateSelectedRotation();
-        UpdateSelectedTile();
+        TileRotationMatrix = Matrix4x4.Rotate(Quaternion.Euler(0f, 0f, SelectedTileRotation * 90f));
+        SelectedTile = _TilePalletSO.PlaceableTiles[_SelectedTileIndex];
         UpdateSelectedObject();
     }
 
@@ -97,7 +97,9 @@ public class ObjectPlacerSystem : MonoBehaviour
             _LogicTilemap.SetTile(_cellCords, SelectedTile);
             _LogicTilemap.SetTransformMatrix(_cellCords, TileRotationMatrix);
             _LogicTilemap.SetTileFlags(_cellCords, TileFlags.None);
-            LogicMap.Map.Add((Vector2Int)_cellCords, SelectedObject);
+
+            TilesTextures objectTextures = _TilePalletSO.TilesTexture[_SelectedTileIndex];
+            LogicMap.PlaceObject((Vector2Int)_cellCords, SelectedObject, objectTextures);
         }
     }
 

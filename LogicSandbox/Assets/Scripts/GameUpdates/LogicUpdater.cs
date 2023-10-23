@@ -7,15 +7,22 @@ using UnityEngine.UIElements;
 
 public static class LogicMap
 {
-    public static Dictionary<Vector2Int, dynamic> Map = new Dictionary<Vector2Int, dynamic>();
-    public static List<WireNetwork> List = new List<WireNetwork>();
+    public static Dictionary<Vector2Int, TilesTextures> TileTextureMap = new();
+    public static Dictionary<Vector2Int, dynamic> Map = new();
+    public static List<WireNetwork> List = new();
 
 
-    public static void PlaceObject(Vector2Int position, dynamic LogicObject)
+    public static void PlaceObject(Vector2Int position, dynamic LogicObject, TilesTextures ObjectTextures)
     {
-        if (LogicObject != null)
-        {
+        if (LogicObject != null) {
+            dynamic outvalue;
+            if (Map.TryGetValue(position, out outvalue)) {
+                Map.Remove(position);
+                TileTextureMap.Remove(position);
+            }
             Map.Add(position, LogicObject);
+            TileTextureMap.Add(position, ObjectTextures);
+
         }
     }
     public static dynamic GetObject(Vector2Int position) {
@@ -27,6 +34,7 @@ public static class LogicMap
     }
 
 }
+
 
 
 public class LogicUpdater : MonoBehaviour
