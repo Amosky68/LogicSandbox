@@ -17,17 +17,14 @@ public static class LogicMap
 
     public static void PlaceObject(Vector2Int position, dynamic LogicObject, TileSprites ObjectTextures, GameObject gameObject)
     {
-        if (LogicObject != null) {
-            if (Map.ContainsKey(position)) {
-                Map.Remove(position);
-                TileTextureMap.Remove(position);
-                GameObjectMap.Remove(position);
-            }
-            Map.Add(position, LogicObject);
-            TileTextureMap.Add(position, ObjectTextures);
-            GameObjectMap.Add(position, gameObject);
-
+        if (LogicObject == null) { return;  }
+        if (Map.ContainsKey(position)) {
+            RemoveObject(position);
         }
+        Map.Add(position, LogicObject);
+        TileTextureMap.Add(position, ObjectTextures);
+        GameObjectMap.Add(position, gameObject);
+        
     }
 
     public static void RemoveObject(Vector2Int position)
@@ -89,14 +86,13 @@ public class LogicUpdater : MonoBehaviour
     private void RenderMap()
     {
         Vector2Int _objectPosition;
-        foreach (dynamic logicObject in LogicMap.Map.Values) {
-            _objectPosition = logicObject.position;
-            print("paint " + _objectPosition + " " + LogicMap.Map.Values.ToArray());
+        foreach (KeyValuePair<Vector2Int, dynamic> logicObject in LogicMap.Map) {
+            _objectPosition = logicObject.Key;
 
             TileSprites _tSprite;
             if (LogicMap.TileTextureMap.TryGetValue(_objectPosition, out _tSprite)) 
-            {
-                Sprite _sprite = logicObject.IsActive() ? _tSprite.Active : _tSprite.Inactive;
+            {   Sprite _sprite = logicObject.Value.IsActive() ? _tSprite.Active : _tSprite.Inactive;
+
                 GameObject _gameObject;
                 if (LogicMap.GameObjectMap.TryGetValue(_objectPosition, out _gameObject)) {
                     SpriteRenderer spriteRenderer = _gameObject.GetComponent<SpriteRenderer>();
