@@ -13,7 +13,16 @@ MonoBehaviour:
   m_Name: PlaceableTiles
   m_EditorClassIdentifier: 
   PlaceableTiles:
-  - {fileID: 11400000, guid: 40d20f5cbac37214ba745df989708461, type: 2}
-  - {fileID: 11400000, guid: 718636ab25ecadb43a2ee7f4cd269af2, type: 2}
-  - {fileID: 11400000, guid: 7931d233667be514e87e21661023c13c, type: 2}
-  - {fileID: 11400000, guid: 81ab735931242cb4fbd3d6284de592f5, type: 2}
+  - {fileID: 11400000, guid: ab375e05be8ee1b46b37b4b80b1013c1, type: 2}
+  - {fileID: 11400000, guid: e751706b47ece3c4bb67cb130988effc, type: 2}
+  - {fileID: 11400000, guid: bed2c32ac83e9724fb71f027e59157de, type: 2}
+  - {fileID: 11400000, guid: 64888fb385a97194f943318c298fef18, type: 2}
+  TilesSprites:
+  - Active: {fileID: 2070158632, guid: 70b56caf62f82b04294790c58590c95c, type: 3}
+    Inactive: {fileID: 1811499649, guid: 483d864f00ad8f34ba53fc32148a6cf2, type: 3}
+  - Active: {fileID: 1139605521, guid: 70b56caf62f82b04294790c58590c95c, type: 3}
+    Inactive: {fileID: -239113612, guid: 483d864f00ad8f34ba53fc32148a6cf2, type: 3}
+  - Active: {fileID: -1318729076, guid: 70b56caf62f82b04294790c58590c95c, type: 3}
+    Inactive: {fileID: -798239442, guid: 483d864f00ad8f34ba53fc32148a6cf2, type: 3}
+  - Active: {fileID: -1134683753, guid: 70b56caf62f82b04294790c58590c95c, type: 3}
+    Inactive: {fileID: -1609692300, guid: 483d864f00ad8f34ba53fc32148a6cf2, type: 3}

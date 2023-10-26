@@ -109,8 +109,14 @@ public class Wire : LogicObjects
         inputsSides = connectedSides;
     }
 
-    public List<Wire> GetAdjacentWires()
+    public bool IsActive()
     {
+        return isActivated;
+    }
+
+    // obselete !
+    public List<Wire> GetAdjacentWires()
+    { 
         Vector2Int[] pos = new Vector2Int[4]
         {
             position + new Vector2Int(1, 0),

@@ -6,10 +6,10 @@ using UnityEngine.Tilemaps;
 
 
 [System.Serializable]
-public class TilesTextures
+public class TileSprites
 {
-    public Tile Active;
-    public Tile Inactive;
+    public Sprite Active;
+    public Sprite Inactive;
 }
 
 
@@ -18,8 +18,7 @@ public class PlaceableTilesSO : ScriptableObject
 {
 
 
-    public List<Tile> PlaceableTiles;
-    
-    public List<TilesTextures> TilesTexture;
+    public List<Tile> PlaceableTilesPreview;
+    public List<TileSprites> TilesSprites;
     
 }

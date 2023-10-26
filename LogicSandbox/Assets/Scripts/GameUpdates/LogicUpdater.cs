@@ -1,30 +1,52 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.UIElements;
 
 public static class LogicMap
 {
-    public static Dictionary<Vector2Int, TilesTextures> TileTextureMap = new();
+    public static Dictionary<Vector2Int, TileSprites> TileTextureMap = new();
+    public static Dictionary<Vector2Int, GameObject> GameObjectMap = new();
     public static Dictionary<Vector2Int, dynamic> Map = new();
-    public static List<WireNetwork> List = new();
+
+    public static List<WireNetwork> WireNetworksMap= new();
 
 
-    public static void PlaceObject(Vector2Int position, dynamic LogicObject, TilesTextures ObjectTextures)
+    public static void PlaceObject(Vector2Int position, dynamic LogicObject, TileSprites ObjectTextures, GameObject gameObject)
     {
         if (LogicObject != null) {
-            dynamic outvalue;
-            if (Map.TryGetValue(position, out outvalue)) {
+            if (Map.ContainsKey(position)) {
                 Map.Remove(position);
                 TileTextureMap.Remove(position);
+                GameObjectMap.Remove(position);
             }
             Map.Add(position, LogicObject);
             TileTextureMap.Add(position, ObjectTextures);
+            GameObjectMap.Add(position, gameObject);
 
         }
     }
+
+    public static void RemoveObject(Vector2Int position)
+    {
+        if (Map.ContainsKey(position))
+        {
+            Map.Remove(position);
+            TileTextureMap.Remove(position);
+            GameObject gameObject;
+            if (GameObjectMap.TryGetValue(position, out gameObject)) {
+                GameObject.Destroy(gameObject);
+            }
+            GameObjectMap.Remove(position);
+        }
+    }
+
+
+
+
     public static dynamic GetObject(Vector2Int position) {
         dynamic obj;
         if (Map.TryGetValue(position, out obj)) {
@@ -39,9 +61,7 @@ public static class LogicMap
 
 public class LogicUpdater : MonoBehaviour
 {
-    public Color activatedMask = Color.white;
-    public Color unactivatedMask = Color.black;
-    public Tilemap logicTilemap;
+
     public List<LogicObjects> lobj = new List<LogicObjects>();
 
 
@@ -51,7 +71,7 @@ public class LogicUpdater : MonoBehaviour
         TickSystem.OnTickUpdate += delegate (object sender, TickSystem.OnTickUpdateArgs ags)
         {
             OnTickUpdate();
-            RenderWires();
+            RenderMap();
         };
 
     }
@@ -62,21 +82,29 @@ public class LogicUpdater : MonoBehaviour
         Dictionary<Vector2Int, dynamic> NewMap = new Dictionary<Vector2Int, dynamic>();
         foreach (dynamic logicObject in LogicMap.Map.Values) 
         {
-            print("tick");
         }
     }
 
 
-    private void RenderWires()
+    private void RenderMap()
     {
-        if (logicTilemap == null) { return; }
+        Vector2Int _objectPosition;
         foreach (dynamic logicObject in LogicMap.Map.Values) {
-            if (logicObject is Wire) 
+            _objectPosition = logicObject.position;
+            print("paint " + _objectPosition + " " + LogicMap.Map.Values.ToArray());
+
+            TileSprites _tSprite;
+            if (LogicMap.TileTextureMap.TryGetValue(_objectPosition, out _tSprite)) 
             {
-                print("paint" + logicObject.position);
-                Color displayMask = logicObject.isActivated ? activatedMask : unactivatedMask;
-                logicTilemap.SetColor((Vector3Int)logicObject.position, displayMask);
+                Sprite _sprite = logicObject.IsActive() ? _tSprite.Active : _tSprite.Inactive;
+                GameObject _gameObject;
+                if (LogicMap.GameObjectMap.TryGetValue(_objectPosition, out _gameObject)) {
+                    SpriteRenderer spriteRenderer = _gameObject.GetComponent<SpriteRenderer>();
+                    spriteRenderer.sprite = _sprite;
+                }
+
             }
+            else { print(" No value for TileTextureMap at " + _objectPosition + LogicMap.TileTextureMap.Count);  }
         }
     }
 }

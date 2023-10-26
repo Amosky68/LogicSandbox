@@ -15,8 +15,8 @@ public class UIInventoryStarter : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        for (int i = 0; i < _placeableTiles.PlaceableTiles.Count; i++) {
-            Tile tile = _placeableTiles.PlaceableTiles[i];
+        for (int i = 0; i < _placeableTiles.PlaceableTilesPreview.Count; i++) {
+            Tile tile = _placeableTiles.PlaceableTilesPreview[i];
 
             GameObject obj = Instantiate(_itemPrefab, _itemsHolder.transform);
             GameObject textureChild = obj.transform.Find("Texture").gameObject;

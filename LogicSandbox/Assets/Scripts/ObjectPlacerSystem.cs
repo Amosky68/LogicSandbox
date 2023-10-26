@@ -10,6 +10,8 @@ public class ObjectPlacerSystem : MonoBehaviour
     [Header("Tiles")]
     [SerializeField] private PlaceableTilesSO _TilePalletSO;
     [SerializeField] private int _SelectedTileIndex = 0;
+    [SerializeField] private GameObject _WorldTilePrefab;
+
 
     public Tile SelectedTile;
     public dynamic SelectedObject;
@@ -19,18 +21,17 @@ public class ObjectPlacerSystem : MonoBehaviour
     [Header("Tilemaps")]
     [Space(10)]
     [SerializeField] private Tilemap _PreviewTilemap;
-    [SerializeField] private Tilemap _LogicTilemap;
 
 
     // Temporary variables
     private Vector3Int _cellCords;
-    private Matrix4x4 TileRotationMatrix;
+    private Quaternion TileRotationMatrix;
 
 
     void Start()
     {
-        TileRotationMatrix = Matrix4x4.Rotate(Quaternion.Euler(0f, 0f, SelectedTileRotation * 90f));
-        SelectedTile = _TilePalletSO.PlaceableTiles[_SelectedTileIndex];
+        TileRotationMatrix = Quaternion.Euler(0f, 0f, SelectedTileRotation * 90f);
+        SelectedTile = _TilePalletSO.PlaceableTilesPreview[_SelectedTileIndex];
         UpdateSelectedObject();
     }
 
@@ -60,12 +61,12 @@ public class ObjectPlacerSystem : MonoBehaviour
     private void UpdateSelectedTile()
     {   
         if (Input.GetKey(KeyCode.LeftControl)) {
-            int palletq = _TilePalletSO.PlaceableTiles.Count;
+            int palletq = _TilePalletSO.PlaceableTilesPreview.Count;
             float change = Input.mouseScrollDelta.y;
             _SelectedTileIndex += (int)change;
             _SelectedTileIndex = (_SelectedTileIndex < 0) ? _SelectedTileIndex + palletq : _SelectedTileIndex % palletq;
         }
-        SelectedTile = _TilePalletSO.PlaceableTiles[_SelectedTileIndex];
+        SelectedTile = _TilePalletSO.PlaceableTilesPreview[_SelectedTileIndex];
     }
     private void UpdateSelectedObject()
     {
@@ -78,7 +79,7 @@ public class ObjectPlacerSystem : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.R))
         {
             SelectedTileRotation = (SelectedTileRotation - 1) % 4;
-            TileRotationMatrix = Matrix4x4.Rotate(Quaternion.Euler(0f, 0f, SelectedTileRotation * 90f));
+            TileRotationMatrix = Quaternion.Euler(0f, 0f, SelectedTileRotation * 90f);
         }
     }
 
@@ -87,25 +88,26 @@ public class ObjectPlacerSystem : MonoBehaviour
     private void UpdatePreviewTilemap() {
         _PreviewTilemap.ClearAllTiles();
         _PreviewTilemap.SetTile(_cellCords, SelectedTile);
-        _PreviewTilemap.SetTransformMatrix(_cellCords, TileRotationMatrix);
+        _PreviewTilemap.SetTransformMatrix(_cellCords, Matrix4x4.Rotate(TileRotationMatrix));
     }
 
     private void PlaceObject()
     {
         if (Input.GetMouseButtonDown(0))
-        { 
-            _LogicTilemap.SetTile(_cellCords, SelectedTile);
-            _LogicTilemap.SetTransformMatrix(_cellCords, TileRotationMatrix);
-            _LogicTilemap.SetTileFlags(_cellCords, TileFlags.None);
+        {
+            TileSprites _objectTextures = _TilePalletSO.TilesSprites[_SelectedTileIndex];
 
-            TilesTextures objectTextures = _TilePalletSO.TilesTexture[_SelectedTileIndex];
-            LogicMap.PlaceObject((Vector2Int)_cellCords, SelectedObject, objectTextures);
+            GameObject _gameObject = Instantiate(_WorldTilePrefab, _cellCords, TileRotationMatrix, this.transform);
+            SpriteRenderer _spriteRenderer = _gameObject.GetComponent<SpriteRenderer>();
+            _spriteRenderer.sprite = _objectTextures.Active;
+
+            LogicMap.PlaceObject((Vector2Int)_cellCords, SelectedObject, _objectTextures, _gameObject);
         }
     }
 
     private void DestroyObject() {
         if (Input.GetMouseButton(1)) {
-            _LogicTilemap.SetTile(_cellCords, null);
+            LogicMap.RemoveObject((Vector2Int)_cellCords);
         }
     }
 }
