@@ -102,11 +102,17 @@ public class ObjectPlacerSystem : MonoBehaviour
             _spriteRenderer.sprite = _objectTextures.Active;
 
             LogicMap.PlaceObject((Vector2Int)_cellCords, SelectedObject, _objectTextures, _gameObject);
+            print("SelectedObject.GetAdjacentWires : ");
+            foreach (var x in SelectedObject.GetAdjacentWires())
+            {
+                Debug.Log(x.ToString());
+            }
         }
     }
 
     private void DestroyObject() {
         if (Input.GetMouseButton(1)) {
+            LogicMap.UpdateMapOnWireRemove((Vector2Int)_cellCords); 
             LogicMap.RemoveObject((Vector2Int)_cellCords);
         }
     }

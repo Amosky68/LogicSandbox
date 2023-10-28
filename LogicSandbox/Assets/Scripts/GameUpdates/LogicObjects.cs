@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 
 // Basic Orientations :
@@ -37,25 +38,22 @@ public class WireNetwork
 {
     public Dictionary<Vector2Int, Wire> Wires = new Dictionary<Vector2Int, Wire>();
     public bool isActivated = false;
+    public int Id = 0;
+
+    public WireNetwork(bool isActivated, int id = 0)
+    {
+        this.isActivated = isActivated;
+        Id = id;
+    }
 
 
     public void Activate()
     {
-        if (isActivated) { return; }
         isActivated = true;
-        foreach (Wire wire in Wires.Values)
-        {
-            wire.isActivated = true;
-        }
     }
     public void Deactivate()
     {
-        if (!isActivated) { return; }
         isActivated = false;
-        foreach (Wire wire in Wires.Values)
-        {
-            wire.isActivated = false;
-        }
     }
 
     public void AddWire(Wire wire)
@@ -63,75 +61,50 @@ public class WireNetwork
         if (wire == null) { return; }
 
         Wires.Add(wire.position, wire);
-        wire.isActivated = isActivated;
     }
 
-
-    public void UpdateNetwork(Wire InitialWire)
-    {
-        Wires.Clear();
-        isActivated = false;
-        Dictionary<Vector2Int, bool> alreadySearchedTiles = new Dictionary<Vector2Int, bool>();
-        List<Wire> toSearch = new List<Wire>() { InitialWire };
-
-
-        while (toSearch.Count > 0) {
-            alreadySearchedTiles.Add(toSearch[0].position, true);
-            Wire currentWire = toSearch[0];;
-            toSearch.RemoveAt(0);
-
-            foreach (Wire wire in currentWire.GetAdjacentWires()) {
-                if (!alreadySearchedTiles.ContainsKey(wire.position)) {
-                    toSearch.Add(wire);
-                }
-            }
-
-            Wires.Add(currentWire.position, currentWire);
-            isActivated |= currentWire.isActivated; 
-
-        }
-    }
 }
 
 
 public class Wire : LogicObjects
 {
-    public int networkID = 0;
-    public bool isActivated = false;
-
+    public WireNetwork network;
     public Vector2Int position = Vector2Int.zero;
 
 
-    public Wire(int _orientation, List<int> connectedSides, int wireNetworkID = 0)
+    public Wire(int _orientation, List<int> _connectedSides, WireNetwork _wireNetworkID)
     {
-        networkID = wireNetworkID;
+        network = _wireNetworkID;
         orientation = _orientation;
-        inputsSides = connectedSides;
+        inputsSides = _connectedSides;
     }
 
     public bool IsActive()
     {
-        return isActivated;
+        return network.isActivated;
     }
 
-    // obselete !
+
     public List<Wire> GetAdjacentWires()
     { 
         Vector2Int[] pos = new Vector2Int[4]
         {
-            position + new Vector2Int(1, 0),
             position + new Vector2Int(0, 1),
-            position + new Vector2Int(-1, 0),
-            position + new Vector2Int(0, -1)
+            position + new Vector2Int(1, 0),
+            position + new Vector2Int(0, -1),
+            position + new Vector2Int(-1, 0)
         };
 
 
         List<Wire> outlist = new List<Wire>(); // List of output
+        dynamic adjWire;
 
-        dynamic wire;
-        foreach (Vector2Int positions in pos) { // look at all adjacent tiles
-            if (LogicMap.Map.TryGetValue(positions, out wire)) { 
-            if (wire is Wire) { outlist.Add(wire); } // if it contains a wire
+        foreach (int side in inputsSides) { // look at all adjacent tiles
+            int id = (side - orientation) % 4;   // - because the orientation sides is reversed
+            Vector2Int connectedPosition = pos[id];
+
+            if (LogicMap.Map.TryGetValue(connectedPosition, out adjWire)) {
+                if (adjWire is Wire) { outlist.Add(adjWire); } // if it contains a adjWire
             }
         }
 

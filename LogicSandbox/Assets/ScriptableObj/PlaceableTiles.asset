@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d0dc729d1d92454ab891f82f677630e, type: 3}
   m_Name: PlaceableTiles
   m_EditorClassIdentifier: 
-  PlaceableTiles:
+  PlaceableTilesPreview:
   - {fileID: 11400000, guid: ab375e05be8ee1b46b37b4b80b1013c1, type: 2}
   - {fileID: 11400000, guid: e751706b47ece3c4bb67cb130988effc, type: 2}
   - {fileID: 11400000, guid: bed2c32ac83e9724fb71f027e59157de, type: 2}
