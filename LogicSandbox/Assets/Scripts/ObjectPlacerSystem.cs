@@ -6,6 +6,7 @@ using UnityEngine.Tilemaps;
 
 public class ObjectPlacerSystem : MonoBehaviour
 {
+    LogicMap _LogicMap;
 
     [Header("Tiles")]
     [SerializeField] private PlaceableTilesSO _TilePalletSO;
@@ -27,6 +28,11 @@ public class ObjectPlacerSystem : MonoBehaviour
     private Vector3Int _cellCords;
     private Quaternion TileRotationMatrix;
 
+
+    private void Awake()
+    {
+        _LogicMap = GameObject.Find("LogicMap").GetComponent<LogicMap>();
+    }
 
     void Start()
     {
@@ -51,6 +57,7 @@ public class ObjectPlacerSystem : MonoBehaviour
     }
 
 
+    
 
     private void CalculateCellCord()
     {
@@ -101,7 +108,7 @@ public class ObjectPlacerSystem : MonoBehaviour
             SpriteRenderer _spriteRenderer = _gameObject.GetComponent<SpriteRenderer>();
             _spriteRenderer.sprite = _objectTextures.Active;
 
-            LogicMap.PlaceObject((Vector2Int)_cellCords, SelectedObject, _objectTextures, _gameObject);
+            _LogicMap.PlaceObject((Vector2Int)_cellCords, SelectedObject, _objectTextures, _gameObject);
             print("SelectedObject.GetAdjacentWires : ");
             foreach (var x in SelectedObject.GetAdjacentWires())
             {
@@ -112,8 +119,7 @@ public class ObjectPlacerSystem : MonoBehaviour
 
     private void DestroyObject() {
         if (Input.GetMouseButton(1)) {
-            LogicMap.UpdateMapOnWireRemove((Vector2Int)_cellCords); 
-            LogicMap.RemoveObject((Vector2Int)_cellCords);
+            _LogicMap.RemoveObject((Vector2Int)_cellCords);
         }
     }
 }
