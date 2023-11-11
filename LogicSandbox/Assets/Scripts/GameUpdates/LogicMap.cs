@@ -10,7 +10,7 @@ public class LogicMap : MonoBehaviour
 {
     public Dictionary<Vector2Int, TileSprites> TileTextureMap = new();
     public Dictionary<Vector2Int, GameObject> GameObjectMap = new();
-    public Dictionary<Vector2Int, dynamic> Map = new();
+    public Dictionary<Vector2Int, object> Map = new();
 
     [SerializeField] public List<WireNetwork> WireNetworksMap = new();
     public int MaxNetworkId = 0;
@@ -69,12 +69,41 @@ public class LogicMap : MonoBehaviour
     }
 
 
+    #region Wires and Networks
     public WireNetwork GetNewWireNetwork(bool active = false)
     {
-        WireNetwork newWireNetwork = new WireNetwork(active, UnityEngine.Random.Range(0,2000));
+        WireNetwork newWireNetwork = new WireNetwork(active, MaxNetworkId);
         MaxNetworkId++;
         WireNetworksMap.Add(newWireNetwork);
         return newWireNetwork;
+    }
+    public void UpdateWireNetworksMap()  // Ne fonctionne pas pour le moment 
+    {
+        WireNetworkComparer ntwcomparer = new WireNetworkComparer();
+
+        // clone and sort the networks list 
+        List<WireNetwork> ToRemove = new();
+        WireNetworksMap.ForEach((item) => { ToRemove.Add(item);});
+        ToRemove.Sort(ntwcomparer); // trie la liste par Id
+
+        // remove all used networks from the remove list
+        foreach (KeyValuePair< Vector2Int, object> obj in Map) {
+            if (obj.Value.GetType() == typeof(Wire)) {
+                Wire wire = (Wire)obj.Value;
+
+                int result = ToRemove.BinarySearch(wire.network, ntwcomparer);
+                print("result : " + result);
+                if (result > 0) { ToRemove.RemoveAt(result); print("removing .."); }
+                else { print("wire.network.id : " + wire.network.Id); }
+            }
+        }
+
+        // remove all unused networks
+        foreach (WireNetwork ntw in ToRemove.ToList()) {
+            print("ToRemove count : " + ToRemove.Count);
+            WireNetworksMap.Remove(ntw);
+        }
+
     }
 
     // needs to be called before the wire is removed
@@ -132,6 +161,7 @@ public class LogicMap : MonoBehaviour
                 }
             }
         }
+        UpdateWireNetworksMap();
     }
 
     // needs to be called after the wire is placed
@@ -142,15 +172,14 @@ public class LogicMap : MonoBehaviour
         // If it is not, collapse all the networks into one 
 
 
-        WireNetwork newWireNetwork = GetNewWireNetwork();
-
+        
         // check if all of the new adjacent wire's network is the same
         List<Wire> adjacentWires = wire.GetAdjacentWires(_instance);
         List<WireNetwork> adjacentWiresNetworks = new();
         foreach (Wire adjWire in adjacentWires) { adjacentWiresNetworks.Add(wire.network); }
 
         // if the wire has no neighbours
-        if (adjacentWires.Count == 0) { wire.network = newWireNetwork; return; }
+        if (adjacentWires.Count == 0) { wire.network = GetNewWireNetwork(); return; }
         // if all the networks are the same (if any networks aren't different than thz first one) 
         if (adjacentWiresNetworks.Any(o => o != adjacentWiresNetworks[0])) { 
             wire.network = adjacentWires[0].network;
@@ -161,10 +190,12 @@ public class LogicMap : MonoBehaviour
         // if two networks are different
         Debug.Log("------------- network collapse ------------- ");
         foreach (WireNetwork nwk in adjacentWiresNetworks) {
-            if (WireNetworksMap.Contains(nwk)) { WireNetworksMap.Remove(nwk); }
+            if (WireNetworksMap.Contains(nwk)) { WireNetworksMap.Remove(nwk); print("removed " + nwk.Id); }
         }
+        WireNetwork newWireNetwork = GetNewWireNetwork();
 
-        List<Wire> toSearch = new();
+
+        List < Wire> toSearch = new();
         Dictionary<Vector2Int, bool> alreadySearchedTiles = new Dictionary<Vector2Int, bool>();
         toSearch = adjacentWires;
 
@@ -180,9 +211,12 @@ public class LogicMap : MonoBehaviour
 
             foreach (Wire nextWire in searchWire.GetAdjacentWires(_instance))
             {
-                Debug.Log("AdjacentWires : " + nextWire.position);
                 toSearch.Add(nextWire);
             }
         }
+
+        UpdateWireNetworksMap();
     }
+
+    #endregion
 }

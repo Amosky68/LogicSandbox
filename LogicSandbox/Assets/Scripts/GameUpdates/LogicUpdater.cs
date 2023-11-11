@@ -82,8 +82,8 @@ public class LogicUpdater : MonoBehaviour
 
             if (obj is Wire)
             {
-                drawString(obj.position.ToString(), (Vector3Int)logicObject.Key, Color.black);
-                Handles.Label((Vector3Int)logicObject.Key, obj.network.Id.ToString());
+                drawString(obj.position.ToString(), (Vector3Int)logicObject.Key + new Vector3(0.4f, 0.2f), Color.red);
+                drawString(obj.network.Id.ToString(), (Vector3Int)logicObject.Key + new Vector3(0.4f, 0.5f), Color.cyan);
             }
             else { print("OnDrawGizmos : No object at at " + logicObject.Key); }
         }

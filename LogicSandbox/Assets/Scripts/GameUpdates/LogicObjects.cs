@@ -21,6 +21,20 @@ using UnityEngine.UIElements;
 
 
 
+public class WireNetworkComparer : IComparer<WireNetwork>
+{
+    public int Compare(WireNetwork x, WireNetwork y)
+    {
+        return x.Id > y.Id ? 1 : -1;
+    }
+
+    public static IComparer GetWireNetworkComparer()
+    {
+        return (IComparer)new WireNetworkComparer();
+    }
+}
+
+
 
 
 
@@ -33,8 +47,9 @@ public class LogicObjects
 
 }
 
+
 [System.Serializable]
-public class WireNetwork
+public class WireNetwork  
 {
     public Dictionary<Vector2Int, Wire> Wires = new Dictionary<Vector2Int, Wire>();
     public bool isActivated = false;
@@ -62,7 +77,6 @@ public class WireNetwork
 
         Wires.Add(wire.position, wire);
     }
-
 }
 
 
