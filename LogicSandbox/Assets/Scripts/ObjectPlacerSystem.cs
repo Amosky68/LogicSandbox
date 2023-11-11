@@ -77,9 +77,14 @@ public class ObjectPlacerSystem : MonoBehaviour
     }
     private void UpdateSelectedObject()
     {
-        SelectedObject = LogicObjectsProperties.Objects[_SelectedTileIndex];
-        SelectedObject.orientation = SelectedTileRotation;
-        SelectedObject.position = ((Vector2Int)_cellCords);
+        object select = LogicObjectsProperties.Objects[_SelectedTileIndex];
+        if (select.GetType() == typeof(Wire)) 
+        {
+            Wire selectedWire = (Wire)select;
+            SelectedObject = new Wire(SelectedTileRotation, selectedWire.inputsSides);
+            SelectedObject.position = ((Vector2Int)_cellCords);
+        }
+        
     }
     private void UpdateSelectedRotation()
     {
@@ -104,16 +109,11 @@ public class ObjectPlacerSystem : MonoBehaviour
         {
             TileSprites _objectTextures = _TilePalletSO.TilesSprites[_SelectedTileIndex];
 
-            GameObject _gameObject = Instantiate(_WorldTilePrefab, _cellCords, TileRotationMatrix, this.transform);
+            GameObject _gameObject = Instantiate(_WorldTilePrefab, _cellCords + new Vector3(0.5f,0.5f), TileRotationMatrix, this.transform);
             SpriteRenderer _spriteRenderer = _gameObject.GetComponent<SpriteRenderer>();
             _spriteRenderer.sprite = _objectTextures.Active;
 
             _LogicMap.PlaceObject((Vector2Int)_cellCords, SelectedObject, _objectTextures, _gameObject);
-            print("SelectedObject.GetAdjacentWires : ");
-            foreach (var x in SelectedObject.GetAdjacentWires())
-            {
-                Debug.Log(x.ToString());
-            }
         }
     }
 

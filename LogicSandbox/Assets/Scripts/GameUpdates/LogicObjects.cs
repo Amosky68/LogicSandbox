@@ -33,7 +33,7 @@ public class LogicObjects
 
 }
 
-
+[System.Serializable]
 public class WireNetwork
 {
     public Dictionary<Vector2Int, Wire> Wires = new Dictionary<Vector2Int, Wire>();
@@ -72,9 +72,9 @@ public class Wire : LogicObjects
     public Vector2Int position = Vector2Int.zero;
 
 
-    public Wire(int _orientation, List<int> _connectedSides, WireNetwork _wireNetworkID)
+    public Wire(int _orientation, List<int> _connectedSides, WireNetwork _network = null)
     {
-        network = _wireNetworkID;
+        network = _network;
         orientation = _orientation;
         inputsSides = _connectedSides;
     }
@@ -85,7 +85,7 @@ public class Wire : LogicObjects
     }
 
 
-    public List<Wire> GetAdjacentWires()
+    public List<Wire> GetAdjacentWires(LogicMap _LogicMap)
     { 
         Vector2Int[] pos = new Vector2Int[4]
         {
@@ -103,7 +103,7 @@ public class Wire : LogicObjects
             int id = (side - orientation) % 4;   // - because the orientation sides is reversed
             Vector2Int connectedPosition = pos[id];
 
-            if (LogicMap.Map.TryGetValue(connectedPosition, out adjWire)) {
+            if (_LogicMap.Map.TryGetValue(connectedPosition, out adjWire)) {
                 if (adjWire is Wire) { outlist.Add(adjWire); } // if it contains a adjWire
             }
         }

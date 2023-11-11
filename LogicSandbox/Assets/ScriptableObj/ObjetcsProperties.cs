@@ -10,7 +10,7 @@ public static class LogicObjectsProperties
 {
     static WireNetwork wNetwork = new WireNetwork(false);
 
-    public static List<dynamic> Objects = new List<dynamic>()
+    public static List<object> Objects = new List<object>()
     {
         new Wire(0 , new List<int> {0,1,2,3} , wNetwork) , // 4 connected wire
         new Wire(0 , new List<int> {1,2,3} , wNetwork) , // 3 connected wire

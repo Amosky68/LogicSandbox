@@ -1,19 +1,18 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 
 
 
+[System.Serializable]
 public class LogicMap : MonoBehaviour
 {
-    public static Dictionary<Vector2Int, TileSprites> TileTextureMap = new();
-    public static Dictionary<Vector2Int, GameObject> GameObjectMap = new();
-    public static Dictionary<Vector2Int, dynamic> Map = new();
+    public Dictionary<Vector2Int, TileSprites> TileTextureMap = new();
+    public Dictionary<Vector2Int, GameObject> GameObjectMap = new();
+    public Dictionary<Vector2Int, dynamic> Map = new();
 
-    public List<WireNetwork> WireNetworksMap = new();
+    [SerializeField] public List<WireNetwork> WireNetworksMap = new();
     public int MaxNetworkId = 0;
 
 
@@ -72,7 +71,7 @@ public class LogicMap : MonoBehaviour
 
     public WireNetwork GetNewWireNetwork(bool active = false)
     {
-        WireNetwork newWireNetwork = new WireNetwork(active, MaxNetworkId);
+        WireNetwork newWireNetwork = new WireNetwork(active, UnityEngine.Random.Range(0,2000));
         MaxNetworkId++;
         WireNetworksMap.Add(newWireNetwork);
         return newWireNetwork;
@@ -102,7 +101,7 @@ public class LogicMap : MonoBehaviour
 
 
         // add adjescent wires to the search list
-        foreach (var nextWire in InitialWire.GetAdjacentWires())
+        foreach (var nextWire in InitialWire.GetAdjacentWires(_instance))
         {
             toSearch.Add(new List<Wire> { nextWire });
         }
@@ -124,7 +123,7 @@ public class LogicMap : MonoBehaviour
                 toSearch[NetworkIndex].RemoveAt(0);
                 Wire currentWire = toSearch[NetworkIndex][0];
 
-                foreach (Wire wire in currentWire.GetAdjacentWires())
+                foreach (Wire wire in currentWire.GetAdjacentWires(_instance))
                 {
                     if (!alreadySearchedTiles.ContainsKey(wire.position))
                     {
@@ -146,40 +145,43 @@ public class LogicMap : MonoBehaviour
         WireNetwork newWireNetwork = GetNewWireNetwork();
 
         // check if all of the new adjacent wire's network is the same
-        List<Wire> adjacentWires = wire.GetAdjacentWires();
+        List<Wire> adjacentWires = wire.GetAdjacentWires(_instance);
         List<WireNetwork> adjacentWiresNetworks = new();
         foreach (Wire adjWire in adjacentWires) { adjacentWiresNetworks.Add(wire.network); }
 
+        // if the wire has no neighbours
         if (adjacentWires.Count == 0) { wire.network = newWireNetwork; return; }
-        if (adjacentWiresNetworks.Any(o => o != adjacentWiresNetworks[0])) { wire.network = adjacentWires[0].network; }
-        // if all the networks are the same 
+        // if all the networks are the same (if any networks aren't different than thz first one) 
+        if (adjacentWiresNetworks.Any(o => o != adjacentWiresNetworks[0])) { 
+            wire.network = adjacentWires[0].network;
+            return;
+        }
+        
 
+        // if two networks are different
+        Debug.Log("------------- network collapse ------------- ");
+        foreach (WireNetwork nwk in adjacentWiresNetworks) {
+            if (WireNetworksMap.Contains(nwk)) { WireNetworksMap.Remove(nwk); }
+        }
 
-        else // if two networks are different
+        List<Wire> toSearch = new();
+        Dictionary<Vector2Int, bool> alreadySearchedTiles = new Dictionary<Vector2Int, bool>();
+        toSearch = adjacentWires;
+
+        while (toSearch.Count > 0)
         {
-            Debug.Log("collapsing");
-            foreach (WireNetwork nwk in adjacentWiresNetworks)
+            Wire searchWire = toSearch[0];
+            toSearch.RemoveAt(0);
+
+            if (alreadySearchedTiles.ContainsKey(searchWire.position)) { continue; }
+            Debug.Log("Searched wire position : " + searchWire.position);
+            searchWire.network = newWireNetwork;
+            alreadySearchedTiles.Add(searchWire.position, true);
+
+            foreach (Wire nextWire in searchWire.GetAdjacentWires(_instance))
             {
-                if (WireNetworksMap.Contains(nwk)) { WireNetworksMap.Remove(nwk); }
-            }
-
-            List<Wire> toSearch = new();
-            Dictionary<Vector2Int, bool> alreadySearchedTiles = new Dictionary<Vector2Int, bool>();
-            toSearch = adjacentWires;
-
-            while (toSearch.Count > 0)
-            {
-                Wire searchWire = toSearch[0];
-                toSearch.RemoveAt(0);
-
-                if (alreadySearchedTiles.ContainsKey(searchWire.position)) { continue; }
-                searchWire.network = newWireNetwork;
-                alreadySearchedTiles.Add(searchWire.position, true);
-
-                foreach (Wire nextWire in searchWire.GetAdjacentWires())
-                {
-                    toSearch.Add(nextWire);
-                }
+                Debug.Log("AdjacentWires : " + nextWire.position);
+                toSearch.Add(nextWire);
             }
         }
     }

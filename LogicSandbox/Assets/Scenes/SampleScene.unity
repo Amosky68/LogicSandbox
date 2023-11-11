@@ -160,7 +160,7 @@ Tilemap:
   m_Color: {r: 0.6603774, g: 0.6603774, b: 0.6603774, a: 1}
   m_Origin: {x: 0, y: 0, z: 0}
   m_Size: {x: 0, y: 0, z: 1}
-  m_TileAnchor: {x: 0, y: 0, z: 0}
+  m_TileAnchor: {x: 0.5, y: 0.5, z: 0}
   m_TileOrientation: 0
   m_TileOrientationMatrix:
     e00: 1
@@ -673,6 +673,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 900499237}
+  - component: {fileID: 900499238}
   m_Layer: 0
   m_Name: LogicMap
   m_TagString: Untagged
@@ -695,6 +696,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &900499238
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 900499236}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d185e46dc40671c49ad15fb6a56d8216, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  WireNetworksMap: []
+  MaxNetworkId: 0
 --- !u!1 &937399593
 GameObject:
   m_ObjectHideFlags: 0
@@ -919,8 +934,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41dc5c8d3e561fe4f9d0e91bfdc1462e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsPaused: 1
-  TickDelay: 1.18
+  IsPaused: 0
+  TickDelay: 0.5
 --- !u!1 &1740350378
 GameObject:
   m_ObjectHideFlags: 0
