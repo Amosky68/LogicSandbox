@@ -99,8 +99,8 @@ public class Wire : LogicObjects
     }
 
 
-    public List<Wire> GetAdjacentWires(LogicMap _LogicMap)
-    { 
+    public List<Vector2Int> GetConnections()
+    {
         Vector2Int[] pos = new Vector2Int[4]
         {
             position + new Vector2Int(0, 1),
@@ -108,17 +108,32 @@ public class Wire : LogicObjects
             position + new Vector2Int(0, -1),
             position + new Vector2Int(-1, 0)
         };
+        List<Vector2Int> connections = new();
+
+        foreach (int side in inputsSides)
+        { 
+            int id = (side - orientation) % 4;   // (-) because the orientation sides is reversed
+            Vector2Int connectedPosition = pos[id];
+            connections.Add(connectedPosition);
+        }
+
+        return connections;
+    }
+
+    public List<Wire> GetAdjacentWires(LogicMap _LogicMap)
+    { 
+        
 
 
         List<Wire> outlist = new List<Wire>(); // List of output
-        dynamic adjWire;
 
-        foreach (int side in inputsSides) { // look at all adjacent tiles
-            int id = (side - orientation) % 4;   // - because the orientation sides is reversed
-            Vector2Int connectedPosition = pos[id];
-
-            if (_LogicMap.Map.TryGetValue(connectedPosition, out adjWire)) {
-                if (adjWire is Wire) { outlist.Add(adjWire); } // if it contains a adjWire
+        foreach (Vector2Int connectedPosition in GetConnections())  { // look at all adjacent tiles
+            if (_LogicMap.Map.TryGetValue(connectedPosition, out object adjWire)) {
+                if (adjWire.GetType() == typeof(Wire)) {
+                    Wire nextwire = (Wire) adjWire;
+                    
+                    if (nextwire.GetConnections().Contains(position)) { outlist.Add(nextwire); }
+                }     
             }
         }
 
