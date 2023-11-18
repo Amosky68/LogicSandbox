@@ -6,6 +6,24 @@ using UnityEngine;
 
 
 
+/*  Tick Update Steps :
+ *  
+ *  - Call all Update Methods on all objects of the map
+ *      | put the result in the "afterupdate" variable
+ *    
+ *  - Reset all Networks
+ *    
+ *  - after update all objects of the map 
+ *      | Set the object activation from afterupdate
+ * 
+ *  - Render all objects with the right texture
+ * 
+ */
+
+
+
+
+
 public class LogicUpdater : MonoBehaviour
 {
     LogicMap _LogicMap;
@@ -28,34 +46,40 @@ public class LogicUpdater : MonoBehaviour
 
     void OnTickUpdate()
     {
-        Dictionary<Vector2Int, dynamic> NewMap = new Dictionary<Vector2Int, dynamic>();
-        foreach (dynamic logicObject in _LogicMap.Map.Values) 
-        {
+        // Update all objects 
+        foreach (dynamic logicObject in _LogicMap.GlMap.Map.Values)  {
+            logicObject.OnObjectUpdate(_LogicMap.GlMap);
+        }
+        // Reset all the networks
+        foreach (WireNetwork network in _LogicMap.GlMap.WireNetworksMap) {
+            network.Deactivate();
+        }
+        // After update all the objects
+        foreach (dynamic logicObject in _LogicMap.GlMap.Map.Values) {
+            logicObject.AfterUpdate();
         }
     }
 
     private void RenderMap()
     {
         Vector2Int _objectPosition;
-        foreach (KeyValuePair<Vector2Int, dynamic> logicObject in _LogicMap.Map) {
+        foreach (KeyValuePair<Vector2Int, dynamic> logicObject in _LogicMap.GlMap.Map) {
             _objectPosition = logicObject.Key;
 
             TileSprites _tSprite;
-            if (_LogicMap.TileTextureMap.TryGetValue(_objectPosition, out _tSprite)) 
+            if (_LogicMap.GlMap.TileTextureMap.TryGetValue(_objectPosition, out _tSprite)) 
             {   Sprite _sprite = logicObject.Value.IsActive() ? _tSprite.Active : _tSprite.Inactive;
 
                 GameObject _gameObject;
-                if (_LogicMap.GameObjectMap.TryGetValue(_objectPosition, out _gameObject)) {
+                if (_LogicMap.GlMap.GameObjectMap.TryGetValue(_objectPosition, out _gameObject)) {
                     SpriteRenderer spriteRenderer = _gameObject.GetComponent<SpriteRenderer>();
                     spriteRenderer.sprite = _sprite;
                 }
 
             }
-            else { print(" No value for TileTextureMap at " + _objectPosition + _LogicMap.TileTextureMap.Count);  }
+            else { print(" No value for TileTextureMap at " + _objectPosition + _LogicMap.GlMap.TileTextureMap.Count);  }
         }
     }
-
-
 
 
     // Debug Functions -----------
@@ -70,18 +94,15 @@ public class LogicUpdater : MonoBehaviour
         UnityEditor.Handles.EndGUI();
     }
 
-
     void OnDrawGizmos()
     {
         if (_LogicMap == null) { return; }
 
-        dynamic obj;
-        foreach (KeyValuePair<Vector2Int, dynamic> logicObject in _LogicMap.Map)
+        foreach (KeyValuePair<Vector2Int, object> logicObject in _LogicMap.GlMap.Map)
         {
-            obj = logicObject.Value;
-
-            if (obj is Wire)
+            if (logicObject.Value.GetType() == typeof(LogicalWire))
             {
+                LogicalWire obj = (LogicalWire)logicObject.Value;
                 drawString(obj.position.ToString(), (Vector3Int)logicObject.Key + new Vector3(0.4f, 0.2f), Color.red);
                 drawString(obj.network.Id.ToString(), (Vector3Int)logicObject.Key + new Vector3(0.4f, 0.5f), Color.cyan);
             }

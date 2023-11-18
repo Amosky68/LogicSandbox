@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 
 
+
 [System.Serializable]
-public class LogicMap : MonoBehaviour
+public class GlobalMap : ICloneable
 {
     public Dictionary<Vector2Int, TileSprites> TileTextureMap = new();
     public Dictionary<Vector2Int, GameObject> GameObjectMap = new();
@@ -14,6 +16,34 @@ public class LogicMap : MonoBehaviour
 
     [SerializeField] public List<WireNetwork> WireNetworksMap = new();
     public int MaxNetworkId = 0;
+
+
+    public object Clone()
+    {
+        GlobalMap cloneMap = new GlobalMap();
+        cloneMap.TileTextureMap = TileTextureMap.ToDictionary(entry => entry.Key, entry => entry.Value);
+        cloneMap.GameObjectMap = GameObjectMap.ToDictionary(entry => entry.Key, entry => entry.Value);
+        cloneMap.Map = Map.ToDictionary(entry => entry.Key, entry => entry.Value);
+        cloneMap.WireNetworksMap = new();
+
+        foreach (WireNetwork wnet in WireNetworksMap) {
+            cloneMap.WireNetworksMap.Add( new WireNetwork(false, wnet.Id) );
+        }
+
+        cloneMap.MaxNetworkId = MaxNetworkId;
+        return cloneMap;
+    }
+}
+
+
+
+
+
+
+[System.Serializable]
+public class LogicMap : MonoBehaviour
+{
+    public GlobalMap GlMap = new GlobalMap();
 
 
     private static LogicMap _instance;
@@ -24,44 +54,44 @@ public class LogicMap : MonoBehaviour
     }
 
 
-    public void PlaceObject(Vector2Int position, dynamic LogicObject, TileSprites ObjectTextures, GameObject gameObject)
+    public void PlaceObject(Vector2Int position, object LogicObject, TileSprites ObjectTextures, GameObject gameObject)
     {
         if (LogicObject == null) { return; }
-        if (Map.ContainsKey(position))
+        if (GlMap.Map.ContainsKey(position))
         {
             RemoveObject(position);
         }
-        Map.Add(position, LogicObject);
-        TileTextureMap.Add(position, ObjectTextures);
-        GameObjectMap.Add(position, gameObject);
+        GlMap.Map.Add(position, LogicObject);
+        GlMap.TileTextureMap.Add(position, ObjectTextures);
+        GlMap.GameObjectMap.Add(position, gameObject);
 
-        if (LogicObject is Wire) { UpdateMapOnWireAdd(position, LogicObject); }
+        if (LogicObject.GetType() ==  typeof(LogicalWire)) { UpdateMapOnWireAdd(position, (LogicalWire)LogicObject); }
 
     }
     public void RemoveObject(Vector2Int position)
     {
-        if (Map.ContainsKey(position))
+        if (GlMap.Map.ContainsKey(position))
         {
             dynamic wireObj;
-            if (Map.TryGetValue(position, out wireObj))
+            if (GlMap.Map.TryGetValue(position, out wireObj))
             {
-                if (wireObj is Wire) { UpdateMapOnWireRemove(position); }
+                if (wireObj is LogicalWire) { UpdateMapOnWireRemove(position); }
             }
 
-            Map.Remove(position);
-            TileTextureMap.Remove(position);
+            GlMap.Map.Remove(position);
+            GlMap.TileTextureMap.Remove(position);
             GameObject gameObject;
-            if (GameObjectMap.TryGetValue(position, out gameObject))
+            if (GlMap.GameObjectMap.TryGetValue(position, out gameObject))
             {
                 GameObject.Destroy(gameObject);
             }
-            GameObjectMap.Remove(position);
+            GlMap.GameObjectMap.Remove(position);
         }
     }
     public dynamic GetObject(Vector2Int position)
     {
         dynamic obj;
-        if (Map.TryGetValue(position, out obj))
+        if (GlMap.Map.TryGetValue(position, out obj))
         {
             return obj;
         }
@@ -72,9 +102,9 @@ public class LogicMap : MonoBehaviour
     #region Wires and Networks
     public WireNetwork GetNewWireNetwork(bool active = false)
     {
-        WireNetwork newWireNetwork = new WireNetwork(active, MaxNetworkId);
-        MaxNetworkId++;
-        WireNetworksMap.Add(newWireNetwork);
+        WireNetwork newWireNetwork = new WireNetwork(active, GlMap.MaxNetworkId);
+        GlMap.MaxNetworkId++;
+        GlMap.WireNetworksMap.Add(newWireNetwork);
         return newWireNetwork;
     }
     public void UpdateWireNetworksMap()  // Ne fonctionne pas pour le moment 
@@ -83,20 +113,21 @@ public class LogicMap : MonoBehaviour
 
         // clone and sort the networks list 
         List<WireNetwork> ToRemove = new();
-        WireNetworksMap.ForEach((item) => { ToRemove.Add(item);});
+        GlMap.WireNetworksMap.ForEach((item) => { ToRemove.Add(item);});
         ToRemove.Sort(ntwcomparer); // trie la liste par Id
 
         // remove all used networks from the remove list
-        foreach (KeyValuePair< Vector2Int, object> obj in Map) {
+        foreach (KeyValuePair< Vector2Int, object> obj in GlMap.Map) {
             
-            if (obj.Value.GetType() == typeof(Wire)) {
+            if (obj.Value.GetType() == typeof(LogicalWire)) {
                 
-                Wire wire = (Wire)obj.Value;
+                LogicalWire wire = (LogicalWire)obj.Value;
                 /* 
                 int result = ToRemove.BinarySearch(wire.network, ntwcomparer);
                 print("result : " + result);
                 if (result > 0) { ToRemove.RemoveAt(result); print("removing .."); }
-                else { print("wire.network.id : " + wire.network.Id); } */
+                else { print("wire.network.id : " + wire.network.Id); } 
+                */
                 try { ToRemove.Remove(wire.network); }
                 catch { }
             }
@@ -106,8 +137,7 @@ public class LogicMap : MonoBehaviour
 
         // remove all unused networks
         foreach (WireNetwork ntw in ToRemove.ToList()) {
-            print("ToRemove count : " + ToRemove.Count);
-            WireNetworksMap.Remove(ntw);
+            GlMap.WireNetworksMap.Remove(ntw);
         }
 
     }
@@ -121,24 +151,24 @@ public class LogicMap : MonoBehaviour
 
         // Get the wire at position "Vector2Int position"
         dynamic objMap;
-        Wire InitialWire;
-        if (Map.TryGetValue(position, out objMap))
+        LogicalWire InitialWire;
+        if (GlMap.Map.TryGetValue(position, out objMap))
         {
-            if (objMap is Wire) { InitialWire = objMap; }
-            else { throw new Exception("UpdateMapOnWireRemove error - objMap is not a Wire "); }
+            if (objMap is LogicalWire) { InitialWire = objMap; }
+            else { throw new Exception("UpdateMapOnWireRemove error - objMap is not a LogicalWire "); }
         }
         else { throw new Exception("UpdateMapOnWireRemove error - no LogicObject at " + position); }
 
 
-        List<List<Wire>> toSearch = new List<List<Wire>>();
+        List<List<LogicalWire>> toSearch = new List<List<LogicalWire>>();
         Dictionary<Vector2Int, bool> alreadySearchedTiles = new Dictionary<Vector2Int, bool>();
         alreadySearchedTiles.Add(position, true);
-        WireNetworksMap.Remove(InitialWire.network);
+        GlMap.WireNetworksMap.Remove(InitialWire.network);
 
 
         // add adjescent wires to the search list
         foreach (var nextWire in InitialWire.GetAdjacentWires(_instance)) {
-            toSearch.Add(new List<Wire> { nextWire });
+            toSearch.Add(new List<LogicalWire> { nextWire });
         }
 
         //Debug.Log("------------- network collapse ------------- ");
@@ -151,14 +181,14 @@ public class LogicMap : MonoBehaviour
             // spreads the network over all wires
             while (toSearch[NetworkIndex].Count > 0)
             {
-                Wire currentWire = toSearch[NetworkIndex][0];
+                LogicalWire currentWire = toSearch[NetworkIndex][0];
                 toSearch[NetworkIndex].RemoveAt(0);            
                 if (alreadySearchedTiles.ContainsKey(currentWire.position)) { continue; }
                 currentWire.network = network;
                 alreadySearchedTiles.Add(currentWire.position, true);
                 //Debug.Log("Searched wire position : " + NetworkIndex + " | " + currentWire.position);
 
-                foreach (Wire wire in currentWire.GetAdjacentWires(_instance))
+                foreach (LogicalWire wire in currentWire.GetAdjacentWires(_instance))
                 {
                     if (!alreadySearchedTiles.ContainsKey(wire.position))
                     {
@@ -171,18 +201,19 @@ public class LogicMap : MonoBehaviour
     }
 
     // needs to be called after the wire is placed
-    public void UpdateMapOnWireAdd(Vector2Int position, Wire wire)
+    public void UpdateMapOnWireAdd(Vector2Int position, LogicalWire wire)
     {
         // Algorithm description :
         // check if all of the new adjacent wire's network is the same
         // If it is not, collapse all the networks into one 
 
+        print("UpdateMapOnWireAdd");
 
         
         // check if all of the new adjacent wire's network is the same
-        List<Wire> adjacentWires = wire.GetAdjacentWires(_instance);
+        List<LogicalWire> adjacentWires = wire.GetAdjacentWires(_instance);
         List<WireNetwork> adjacentWiresNetworks = new();
-        foreach (Wire adjWire in adjacentWires) { adjacentWiresNetworks.Add(wire.network); }
+        foreach (LogicalWire adjWire in adjacentWires) { adjacentWiresNetworks.Add(wire.network); }
 
         // if the wire has no neighbours
         if (adjacentWires.Count == 0) { wire.network = GetNewWireNetwork(); return; }
@@ -196,18 +227,18 @@ public class LogicMap : MonoBehaviour
         // if two networks are different
         //Debug.Log("------------- network collapse ------------- ");
         foreach (WireNetwork nwk in adjacentWiresNetworks) {
-            if (WireNetworksMap.Contains(nwk)) { WireNetworksMap.Remove(nwk); print("removed " + nwk.Id); }
+            if (GlMap.WireNetworksMap.Contains(nwk)) { GlMap.WireNetworksMap.Remove(nwk); print("removed " + nwk.Id); }
         }
         WireNetwork newWireNetwork = GetNewWireNetwork();
 
 
-        List < Wire> toSearch = new();
+        List < LogicalWire> toSearch = new();
         Dictionary<Vector2Int, bool> alreadySearchedTiles = new Dictionary<Vector2Int, bool>();
         toSearch = adjacentWires;
 
         while (toSearch.Count > 0)
         {
-            Wire searchWire = toSearch[0];
+            LogicalWire searchWire = toSearch[0];
             toSearch.RemoveAt(0);
 
             if (alreadySearchedTiles.ContainsKey(searchWire.position)) { continue; }
@@ -215,13 +246,21 @@ public class LogicMap : MonoBehaviour
             searchWire.network = newWireNetwork;
             alreadySearchedTiles.Add(searchWire.position, true);
 
-            foreach (Wire nextWire in searchWire.GetAdjacentWires(_instance))
+            foreach (LogicalWire nextWire in searchWire.GetAdjacentWires(_instance))
             {
                 toSearch.Add(nextWire);
             }
         }
 
         UpdateWireNetworksMap();
+    }
+
+    #endregion
+    #region Map work
+
+    public GlobalMap GetMapCopy()
+    {
+        return (GlobalMap)GlMap.Clone();
     }
 
     #endregion

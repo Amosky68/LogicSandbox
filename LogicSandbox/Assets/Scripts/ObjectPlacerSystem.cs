@@ -78,13 +78,19 @@ public class ObjectPlacerSystem : MonoBehaviour
     private void UpdateSelectedObject()
     {
         object select = LogicObjectsProperties.Objects[_SelectedTileIndex];
-        if (select.GetType() == typeof(Wire)) 
+
+        if (select.GetType() == typeof(LogicalWire)) 
         {
-            Wire selectedWire = (Wire)select;
-            SelectedObject = new Wire(SelectedTileRotation, selectedWire.inputsSides);
-            SelectedObject.position = ((Vector2Int)_cellCords);
+            LogicalWire selectedWire = (LogicalWire)select;
+            SelectedObject = new LogicalWire((Vector2Int)_cellCords, SelectedTileRotation, selectedWire.inputsSides);
         }
-        
+
+        else if (select.GetType() == typeof(LogicalInverter))
+        {
+            LogicalInverter selectedInverter = (LogicalInverter)select;
+            SelectedObject = new LogicalInverter((Vector2Int)_cellCords, SelectedTileRotation, selectedInverter.inputsSides, selectedInverter.outputSides);
+        }
+
     }
     private void UpdateSelectedRotation()
     {
@@ -94,7 +100,6 @@ public class ObjectPlacerSystem : MonoBehaviour
             TileRotationMatrix = Quaternion.Euler(0f, 0f, SelectedTileRotation * 90f);
         }
     }
-
 
 
     private void UpdatePreviewTilemap() {
