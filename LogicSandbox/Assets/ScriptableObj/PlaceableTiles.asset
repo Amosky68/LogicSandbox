@@ -17,6 +17,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e751706b47ece3c4bb67cb130988effc, type: 2}
   - {fileID: 11400000, guid: bed2c32ac83e9724fb71f027e59157de, type: 2}
   - {fileID: 11400000, guid: 64888fb385a97194f943318c298fef18, type: 2}
+  - {fileID: 11400000, guid: 52a231b32b6aa324d9eda530d7ce2149, type: 2}
   TilesSprites:
   - Active: {fileID: 2070158632, guid: 70b56caf62f82b04294790c58590c95c, type: 3}
     Inactive: {fileID: 1811499649, guid: 483d864f00ad8f34ba53fc32148a6cf2, type: 3}
@@ -26,3 +27,5 @@ MonoBehaviour:
     Inactive: {fileID: -798239442, guid: 483d864f00ad8f34ba53fc32148a6cf2, type: 3}
   - Active: {fileID: -1134683753, guid: 70b56caf62f82b04294790c58590c95c, type: 3}
     Inactive: {fileID: -1609692300, guid: 483d864f00ad8f34ba53fc32148a6cf2, type: 3}
+  - Active: {fileID: 21300000, guid: 969d14c66aec29b4ab1ca394fc4af372, type: 3}
+    Inactive: {fileID: 21300000, guid: 58337c711798bbc408f968c96ec2419a, type: 3}
