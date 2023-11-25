@@ -8,6 +8,7 @@ using UnityEngine;
 
 /*  Tick Update Steps :
  *  
+ *  
  *  - Call all Update Methods on all objects of the map
  *      | put the result in the "afterupdate" variable
  *    
@@ -15,6 +16,8 @@ using UnityEngine;
  *    
  *  - after update all objects of the map 
  *      | Set the object activation from afterupdate
+ *      
+ *  - Call all LogicalBridgers 
  * 
  *  - Render all objects with the right texture
  * 
@@ -46,18 +49,32 @@ public class LogicUpdater : MonoBehaviour
 
     void OnTickUpdate()
     {
+
         // Update all objects 
         foreach (dynamic logicObject in _LogicMap.GlMap.Map.Values)  {
-            logicObject.OnObjectUpdate(_LogicMap.GlMap);
+            if (logicObject.LogicalPriority == 0)
+            {
+                logicObject.OnObjectUpdate(_LogicMap.GlMap);
+            }  
         }
+
         // Reset all the networks
         foreach (WireNetwork network in _LogicMap.GlMap.WireNetworksMap) {
             network.Deactivate();
         }
+
         // After update all the objects
         foreach (dynamic logicObject in _LogicMap.GlMap.Map.Values) {
             logicObject.AfterUpdate();
         }
+
+        // Update all Logical Bridgers 
+        foreach (dynamic logicObject in _LogicMap.GlMap.Map.Values){
+            if (logicObject.LogicalPriority > 0) {
+                logicObject.OnObjectUpdate(_LogicMap.GlMap);
+            }
+        }
+
     }
 
     private void RenderMap()

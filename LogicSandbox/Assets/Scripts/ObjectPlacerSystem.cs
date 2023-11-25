@@ -90,6 +90,11 @@ public class ObjectPlacerSystem : MonoBehaviour
             LogicalInverter selectedInverter = (LogicalInverter)select;
             SelectedObject = new LogicalInverter((Vector2Int)_cellCords, SelectedTileRotation, selectedInverter.inputsSides, selectedInverter.outputSides);
         }
+        else if (select.GetType() == typeof(LogicalBridger))
+        {
+            LogicalBridger selectedInverter = (LogicalBridger)select;
+            SelectedObject = new LogicalBridger((Vector2Int)_cellCords);
+        }
 
     }
     private void UpdateSelectedRotation()

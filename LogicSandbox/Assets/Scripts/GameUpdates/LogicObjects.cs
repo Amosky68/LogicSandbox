@@ -88,6 +88,8 @@ public class LogicObjects
     public List<Vector2Int> inputConnections = new();
     public List<Vector2Int> outputConnections = new();
 
+    public int LogicalPriority = 0;
+
     public LogicObjects()
     {
     }
@@ -242,8 +244,39 @@ public class LogicalInverter : LogicObjects, LogicObjectsInterface
 // Not implemented
 public class LogicalBridger : LogicObjects, LogicObjectsInterface
 {
-    void LogicObjectsInterface.OnObjectUpdate(GlobalMap Map)
+
+    public LogicalBridger(Vector2Int _position)
     {
+        orientation = 0;
+        inputsSides = new List<int>() { 0,1,2,3 };
+        outputSides = new List<int>() { 0, 1, 2, 3 };
+        LogicalPriority = 10;
+        position = _position;
+        CalculateConnections();
+    }
+
+    public void OnObjectUpdate(GlobalMap Map)
+    {
+        LogicalWire[] connectedWires = new LogicalWire[4];
+        for (int coonectionIndex = 0; coonectionIndex < inputConnections.Count; coonectionIndex++) {
+            if (Map.Map.TryGetValue(inputConnections[coonectionIndex], out object inputWire)) {
+                if (inputWire.GetType() == typeof(LogicalWire)) {
+                    connectedWires[coonectionIndex] = (LogicalWire)inputWire;
+                }
+            }
+        }
+
+        if (connectedWires[0] != null && connectedWires[2] != null) {
+            bool Conn1 = connectedWires[0].IsActive() || connectedWires[2].IsActive();
+            connectedWires[0].SetNetworkActive(Conn1);
+            connectedWires[2].SetNetworkActive(Conn1);
+        }
+        if (connectedWires[1] != null && connectedWires[3] != null) {
+            bool Conn2 = connectedWires[1].IsActive() || connectedWires[3].IsActive();
+            connectedWires[1].SetNetworkActive(Conn2);
+            connectedWires[3].SetNetworkActive(Conn2);
+        }
+
 
     }
 
@@ -255,7 +288,7 @@ public class LogicalBridger : LogicObjects, LogicObjectsInterface
 
     public void AfterUpdate() { }
 
-    bool LogicObjectsInterface.IsActive() { return true; }
+    public bool IsActive() { return true; }
 
 }
 
